@@ -14,7 +14,7 @@ do
     echo awg interface "${name}" will be created from config file "${basename}"
     cp ${s} /etc/amnezia/amneziawg/${name}.conf
     chmod 600 /etc/amnezia/amneziawg/${name}.conf
-    /usr/bin/ss-server -c /config/config.json
+    /usr/bin/ss-server -c /config/config.json &
     resolvconf -u
     awg-quick up ${name}
     iptables -A FORWARD -i ${name} -j ACCEPT
