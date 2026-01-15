@@ -14,12 +14,23 @@ do
     echo awg interface "${name}" will be created from config file "${basename}"
     cp ${s} /etc/amnezia/amneziawg/${name}.conf
     chmod 600 /etc/amnezia/amneziawg/${name}.conf
-    /usr/bin/ss-server -c /config/config.json &
+    /usr/bin/ss-server -vc /config/config.json &
+    ss_pid=$!
     resolvconf -u
-    awg-quick up ${name}
+    awg-quick up ${name} &
+    wg_pid=$!
     iptables -A FORWARD -i ${name} -j ACCEPT
     iptables -A FORWARD -o ${name} -j ACCEPT
     iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    while kill -s 0 $ss_pid && kill -s 0 $wg_pid
+    do
+      sleep 1
+    done
+    echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    echo "@ ShadowSocks or AWG server quit (or crashed) @"
+    echo "@ Stopping container now...                   @"
+    echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+    exit 1
   fi
 done
 

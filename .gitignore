@@ -1,2 +1,3 @@
 .gitignore
 pushslop.sh
+docker-compose.yml
