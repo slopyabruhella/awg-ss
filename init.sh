@@ -22,7 +22,8 @@ do
     iptables -A FORWARD -i ${name} -j ACCEPT
     iptables -A FORWARD -o ${name} -j ACCEPT
     iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
-    while kill -s 0 $ss_pid && kill -s 0 $wg_pid
+    #####  && kill -s 0 $wg_pid
+    while kill -s 0 $ss_pid
     do
       sleep 1
     done
