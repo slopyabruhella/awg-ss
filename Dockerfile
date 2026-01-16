@@ -55,6 +55,7 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-tools.git /amneziawg-tool
 # copy the amneziawg-go binary from builder stage
 COPY --from=builder /amneziawg-go/amneziawg-go /usr/bin/
 
+COPY tunnel.json /tunnel.json
 COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
