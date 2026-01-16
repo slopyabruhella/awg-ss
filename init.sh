@@ -19,9 +19,15 @@ do
     resolvconf -u
     awg-quick up ${name} &
     wg_pid=$!
-    iptables -A FORWARD -i ${name} -j ACCEPT
-    iptables -A FORWARD -o ${name} -j ACCEPT
-    iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    #iptables -A FORWARD -i ${name} -j ACCEPT
+    #iptables -A FORWARD -o ${name} -j ACCEPT
+    #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    ### Do routing
+    iptables -t nat -A PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
+    iptables -t nat -D PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
+    iptables -t nat -A PREROUTING -i ${name} -p udp -j DNAT --to-destination 127.0.0.1:4096
+    iptables -t nat -D PREROUTING -i ${name} -p udp -j DNAT --to-destination 127.0.0.1:4096
+    ### End routing
     #####  && kill -s 0 $wg_pid
     while kill -s 0 $ss_pid
     do
