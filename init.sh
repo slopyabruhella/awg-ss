@@ -14,11 +14,11 @@ do
     echo awg interface "${name}" will be created from config file "${basename}"
     cp ${s} /etc/amnezia/amneziawg/${name}.conf
     chmod 600 /etc/amnezia/amneziawg/${name}.conf
-    /usr/bin/ss-server -vc /config/config.json &
-    ss_pid=$!
     resolvconf -u
     awg-quick up ${name} &
     wg_pid=$!
+    /usr/bin/ss-server -vc /config/config.json &
+    ss_pid=$!
     #iptables -A FORWARD -i ${name} -j ACCEPT
     #iptables -A FORWARD -o ${name} -j ACCEPT
     #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
