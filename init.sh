@@ -19,9 +19,9 @@ do
     wg_pid=$!
     /usr/bin/ss-server -vc /config/config.json &
     ss_pid=$!
-    #iptables -A FORWARD -i ${name} -j ACCEPT
-    #iptables -A FORWARD -o ${name} -j ACCEPT
-    #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    iptables -A FORWARD -i ${name} -j ACCEPT
+    iptables -A FORWARD -o ${name} -j ACCEPT
+    iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
     ### Do routing
     #iptables -t nat -A PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
     #iptables -t nat -D PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
