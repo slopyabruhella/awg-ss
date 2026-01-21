@@ -53,8 +53,11 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-tools.git /amneziawg-tool
     && rm -rf /amneziawg-tools \
     && apk del .build-deps
 
+
 # copy the amneziawg-go binary from builder stage
 COPY --from=builder /amneziawg-go/amneziawg-go /usr/bin/
+
+RUN sed -i 's|\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1|[[ $proto == -4 ]] \&\& [[ $(sysctl -n net.ipv4.conf.all.src_valid_mark) != 1 ]] \&\& cmd sysctl -q net.ipv4.conf.all.src_valid_mark=1|' /usr/bin/awg-quick
 
 COPY init.sh /init.sh
 RUN chmod +x /init.sh

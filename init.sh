@@ -16,26 +16,17 @@ do
     chmod 600 /etc/amnezia/amneziawg/${name}.conf
     resolvconf -u
     awg-quick up ${name} &
-    wg_pid=$!
-    #/usr/bin/ss-tunnel -s engage.cloudflareclient.com -p 4500 -k bruhlmao -t 300 -b 0.0.0.0 -l 4096 -u &
+    sleep 3
     /usr/bin/ss-server -vc /config/config.json -i ${name} &
     ss_pid=$!
     #iptables -A FORWARD -i ${name} -j ACCEPT
     #iptables -A FORWARD -o ${name} -j ACCEPT
     #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
-    ### Do routing
-    #iptables -t nat -A PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
-    #iptables -t nat -D PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
-    #iptables -t nat -A PREROUTING -i ${name} -p udp -j DNAT --to-destination 127.0.0.1:4096
-    #iptables -t nat -D PREROUTING -i ${name} -p udp -j DNAT --to-destination 127.0.0.1:4096
-    ### End routing
-    #sstun_port=$(jq '.server_port' /config/config.json)
-    #sstun_pass=$(jq '.password' /config/config.json)
-    #sstun_method=$(jq '.method' /config/config.json)
-    while kill -s 0 $ss_pid # && kill -s 0 $wg_pid
+    sleep 10
+    while kill -s 0 $ss_pid && awg show | grep -q ${name}
     do
-      curl -sL http://ipecho.net/plain
-      sleep 3
+      echo "Current IP: $(wget -q -O - http://ipecho.net/plain)"
+      sleep 10
     done
     echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
     echo "@ ShadowSocks or AWG server quit (or crashed) @"
