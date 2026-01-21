@@ -17,21 +17,25 @@ do
     resolvconf -u
     awg-quick up ${name} &
     wg_pid=$!
-    /usr/bin/ss-server -vc /config/config.json &
+    #/usr/bin/ss-tunnel -s engage.cloudflareclient.com -p 4500 -k bruhlmao -t 300 -b 0.0.0.0 -l 4096 -u &
+    /usr/bin/ss-server -vc /config/config.json -i ${name} &
     ss_pid=$!
-    iptables -A FORWARD -i ${name} -j ACCEPT
-    iptables -A FORWARD -o ${name} -j ACCEPT
-    iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    #iptables -A FORWARD -i ${name} -j ACCEPT
+    #iptables -A FORWARD -o ${name} -j ACCEPT
+    #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
     ### Do routing
     #iptables -t nat -A PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
     #iptables -t nat -D PREROUTING -i ${name} -p tcp -j DNAT --to-destination 127.0.0.1:4096
     #iptables -t nat -A PREROUTING -i ${name} -p udp -j DNAT --to-destination 127.0.0.1:4096
     #iptables -t nat -D PREROUTING -i ${name} -p udp -j DNAT --to-destination 127.0.0.1:4096
     ### End routing
-    #####  && kill -s 0 $wg_pid
-    while kill -s 0 $ss_pid
+    #sstun_port=$(jq '.server_port' /config/config.json)
+    #sstun_pass=$(jq '.password' /config/config.json)
+    #sstun_method=$(jq '.method' /config/config.json)
+    while kill -s 0 $ss_pid # && kill -s 0 $wg_pid
     do
-      sleep 1
+      curl -sL http://ipecho.net/plain
+      sleep 3
     done
     echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
     echo "@ ShadowSocks or AWG server quit (or crashed) @"

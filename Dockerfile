@@ -27,6 +27,8 @@ RUN apk --no-cache add \
     iproute2 \
     iptables \
     bash \
+    curl \
+    wget \
     openresolv \
     dumb-init \
     libressl4.2-libcrypto \
@@ -35,7 +37,6 @@ RUN apk --no-cache add --repository=http://dl-cdn.alpinelinux.org/alpine/edge/te
     shadowsocks-libev
 RUN apk --no-cache add --virtual .build-deps \
     dpkg \
-    wget \
     unzip \
     git \
     build-base \
@@ -55,7 +56,6 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-tools.git /amneziawg-tool
 # copy the amneziawg-go binary from builder stage
 COPY --from=builder /amneziawg-go/amneziawg-go /usr/bin/
 
-COPY tunnel.json /tunnel.json
 COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
