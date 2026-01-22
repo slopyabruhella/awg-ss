@@ -16,13 +16,13 @@ do
     chmod 600 /etc/amnezia/amneziawg/${name}.conf
     resolvconf -u
     awg-quick up ${name} &
-    sleep 3
+    sleep 4
     /usr/bin/ss-server -vc /config/config.json -i ${name} &
     ss_pid=$!
     #iptables -A FORWARD -i ${name} -j ACCEPT
     #iptables -A FORWARD -o ${name} -j ACCEPT
     #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
-    sleep 10
+    sleep 6
     while kill -s 0 $ss_pid && awg show | grep -q ${name}
     do
       echo "Current IP: $(wget -q -O - http://ipecho.net/plain)"
