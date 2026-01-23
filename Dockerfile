@@ -34,7 +34,7 @@ RUN apk --no-cache add \
     libressl4.2-libcrypto \
     libsodium
 RUN apk --no-cache add --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
-    shadowsocks-libev
+    shadowsocks-rust
 RUN apk --no-cache add --virtual .build-deps \
     dpkg \
     unzip \
@@ -63,6 +63,9 @@ COPY init.sh /init.sh
 RUN chmod +x /init.sh
 
 EXPOSE 4096/tcp 4096/udp
+EXPOSE 4097/tcp 4097/udp
+EXPOSE 4098/tcp 4098/udp
+EXPOSE 4099/tcp 4099/udp
 
 HEALTHCHECK --interval=1m --timeout=5s --retries=3 \
     CMD /usr/bin/timeout 5s /bin/sh -c "awg show | grep interface || exit 1"
