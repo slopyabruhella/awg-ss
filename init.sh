@@ -17,9 +17,9 @@ do
     resolvconf -u
     awg-quick up ${name} &
     sleep 4
-    /usr/bin/ssserver -vc /config/config.json --outbound-bind-interface ${name} &
+    /usr/bin/ssserver -vc /config/config.json  &
     ss_pid=$!
-    #iptables -A FORWARD -i ${name} -j ACCEPT
+    #iptables -A FORWARD -i ${name} -j ACCEPT--outbound-bind-interface ${name}
     #iptables -A FORWARD -o ${name} -j ACCEPT
     #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
     sleep 6
