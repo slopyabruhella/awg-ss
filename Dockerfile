@@ -1,7 +1,7 @@
 # -------------------------------
 # Build amneziawg-go
 # -------------------------------
-FROM golang:1.24.5 AS builder
+FROM golang:1.24.5 AS awg-build
 
 ARG TARGETARCH
 ARG TARGETVARIANT
@@ -13,6 +13,19 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-go.git . --depth=1 \
     && go mod verify \
     && CGO_ENABLED=0 GOOS=linux GOARCH=$TARGETARCH GOARM=${TARGETVARIANT#v} \
        go build -ldflags '-s -w' -v -o amneziawg-go
+
+
+FROM golang:1.24.5-alpine AS v2ray-build
+
+RUN apk update \
+    && apk upgrade \
+    && apk add --no-cache git build-base \
+    && mkdir -p /go/src/github.com/shadowsocks \
+    && cd /go/src/github.com/shadowsocks \
+    && git clone --depth 1 -b master https://github.com/shadowsocks/v2ray-plugin \
+    && cd v2ray-plugin \
+    && go get -d \
+    && go build
 
 # -------------------------------
 # Final image
@@ -55,7 +68,8 @@ RUN git clone https://github.com/amnezia-vpn/amneziawg-tools.git /amneziawg-tool
 
 
 # copy the amneziawg-go binary from builder stage
-COPY --from=builder /amneziawg-go/amneziawg-go /usr/bin/
+COPY --from=awg-build /amneziawg-go/amneziawg-go /usr/bin/
+COPY --from=v2ray-build /go/src/github.com/shadowsocks/v2ray-plugin/v2ray-plugin /usr/local/bin/v2ray-plugin
 
 RUN sed -i 's|\[\[ $proto == -4 \]\] && cmd sysctl -q net\.ipv4\.conf\.all\.src_valid_mark=1|[[ $proto == -4 ]] \&\& [[ $(sysctl -n net.ipv4.conf.all.src_valid_mark) != 1 ]] \&\& cmd sysctl -q net.ipv4.conf.all.src_valid_mark=1|' /usr/bin/awg-quick
 
