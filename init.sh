@@ -23,12 +23,12 @@ do
     resolvconf -u
     awg-quick up ${name} &
     sleep 4
-    /usr/bin/ssserver -vc /config/config.json &
+    /usr/bin/ssserver -vc /config/config.json --outbound-bind-interface ${name} &
     ss_pid=$!
-    ###  --outbound-bind-interface ${name}
-    iptables -A FORWARD -i ${name} -j ACCEPT
-    iptables -A FORWARD -o ${name} -j ACCEPT
-    iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    ###
+    #iptables -A FORWARD -i ${name} -j ACCEPT
+    #iptables -A FORWARD -o ${name} -j ACCEPT
+    #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
     sleep 6
     while kill -s 0 $ss_pid && awg show | grep -q ${name}
     do
