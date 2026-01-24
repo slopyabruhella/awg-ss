@@ -1,5 +1,11 @@
 #!/bin/bash
 
+mkdir -p /dev/net
+if [ ! -c /dev/net/tun ]; then
+    echo "Creating tun/tap device."
+    mknod /dev/net/tun c 10 200
+fi
+
 # clear existing configurations
 find /etc/amnezia/amneziawg -mindepth 1 -delete
 
@@ -19,9 +25,9 @@ do
     sleep 4
     /usr/bin/ssserver -vc /config/config.json --outbound-bind-interface ${name} &
     ss_pid=$!
-    #iptables -A FORWARD -i ${name} -j ACCEPT
-    #iptables -A FORWARD -o ${name} -j ACCEPT
-    #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    iptables -A FORWARD -i ${name} -j ACCEPT
+    iptables -A FORWARD -o ${name} -j ACCEPT
+    iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
     sleep 6
     while kill -s 0 $ss_pid && awg show | grep -q ${name}
     do
