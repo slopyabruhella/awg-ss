@@ -28,8 +28,9 @@ do
     # Restoring default local routes
     ###
     echo "Fixing local network routes after PostUp AWG"
-    route -n
-    ip addr
+    echo "$(ip route)"
+    echo "$(ip route | grep default)"
+    echo "$(ip route | grep default | awk '{print $3}')"
     DROUTE=$(ip route | grep default | awk '{print $3}');
     HOMENET=192.168.0.0/16;
     HOMENET2=10.0.0.0/8;
@@ -44,10 +45,10 @@ do
     ###
     # Restored local routes
     ###
-    /usr/bin/ssserver -vc /config/config.json &
+    /usr/bin/ssserver -vc /config/config.json --outbound-bind-interface ${name} &
     ss_pid=$!
     sleep 3
-    ### --outbound-bind-interface ${name}
+    ###
     #iptables -A FORWARD -i ${name} -j ACCEPT
     #iptables -A FORWARD -o ${name} -j ACCEPT
     #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
