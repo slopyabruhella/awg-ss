@@ -28,6 +28,8 @@ do
     # Restoring default local routes
     ###
     echo "Fixing local network routes after PostUp AWG"
+    route -n
+    ip addr
     DROUTE=$(ip route | grep default | awk '{print $3}');
     HOMENET=192.168.0.0/16;
     HOMENET2=10.0.0.0/8;
