@@ -20,16 +20,15 @@ do
     echo awg interface "${name}" will be created from config file "${basename}"
     cp ${s} /etc/amnezia/amneziawg/${name}.conf
     chmod 600 /etc/amnezia/amneziawg/${name}.conf
+    echo "Clearing resolvconf"
     resolvconf -u
+    echo "Starting AWG interface ${name}"
     awg-quick up ${name} &
     sleep 3
     ###
     # Restoring default local routes
     ###
     echo "Fixing local network routes after PostUp AWG"
-    echo "$(ip route)"
-    echo "$(ip route | grep default)"
-    echo "$(ip route | grep default | awk '{print $3}')"
     DROUTE=$(ip route | grep default | awk '{print $3}');
     HOMENET=192.168.0.0/16;
     HOMENET2=10.0.0.0/8;
@@ -44,6 +43,7 @@ do
     ###
     # Restored local routes
     ###
+    echo "Starting Shadowsocks server"
     /usr/bin/ssserver -vc /config/config.json --outbound-bind-interface ${name} &
     ss_pid=$!
     sleep 3
@@ -51,6 +51,7 @@ do
     #iptables -A FORWARD -i ${name} -j ACCEPT
     #iptables -A FORWARD -o ${name} -j ACCEPT
     #iptables -A FORWARD -i ${name} -o ${name} -j ACCEPT
+    echo "Startup OK"
     while kill -s 0 $ss_pid && awg show | grep -q ${name}
     do
       echo "Current IP: $(wget -q -O - http://ipecho.net/plain)"
