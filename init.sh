@@ -17,7 +17,6 @@ do
     COUNTER=$(( COUNTER + 1 ))
     basename=$(basename ${s})
     name=${basename%.conf}
-    echo "Docker subnet $dockersubnet via $dockergw"
     echo awg interface "${name}" will be created from config file "${basename}"
     cp ${s} /etc/amnezia/amneziawg/${name}.conf
     chmod 600 /etc/amnezia/amneziawg/${name}.conf
